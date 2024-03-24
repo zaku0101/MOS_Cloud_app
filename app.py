@@ -7,7 +7,7 @@ import datetime as dt
 
 app = Flask(__name__, static_folder="static", template_folder="template")
 
-basePath = r'/Users/zaku/Desktop/mos-drive'
+base_path = r'/Users/zaku/Desktop/mos-drive'
 
 @app.route('/')
 def main_page():
@@ -17,49 +17,50 @@ def main_page():
 def logging_page():
         return render_template("login.html")
 
-def getReadableByteSize(num, suffix='B') -> str:
+def get_readable_byte_size(num, suffix='B') -> str:
     for unit in ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z']:
         if abs(num) < 1024.0:
             return "%3.1f%s%s" % (num, unit, suffix)
         num /= 1024.0
     return "%.1f%s%s" % (num, 'Yi', suffix)
 
-def getTimeStampString(tSec: float) -> str:
-    tObj = dt.datetime.fromtimestamp(tSec)
-    tStr = dt.datetime.strftime(tObj, '%Y-%m-%d %H:%M:%S')
-    return tStr
-def getIconClassForFilename(fName):
-    fileExt = Path(fName).suffix
-    fileExt = fileExt[1:] if fileExt.startswith(".") else fileExt
-    fileTypes = ["aac", "ai", "bmp", "cs", "css", "csv", "doc", "docx", "exe", "gif", "heic", "html", "java", "jpg", "js", "json", "jsx", "key", "m4p", "md", "mdx", "mov", "mp3",
+def get_time_stamp_string(tsec: float) -> str:
+    tobj = dt.datetime.fromtimestamp(tsec)
+    tstr = dt.datetime.strftime(tobj, '%Y-%m-%d %H:%M:%S')
+    return tstr
+def get_icon_class_for_filename(fname):
+    file_ext = Path(fname).suffix
+    file_ext = file_ext[1:] if file_ext.startswith(".") else file_ext
+    file_types = ["aac", "ai", "bmp", "cs", "css", "csv", "doc", "docx", "exe", "gif", "heic", "html", "java", "jpg", "js", "json", "jsx", "key", "m4p", "md", "mdx", "mov", "mp3",
                  "mp4", "otf", "pdf", "php", "png", "pptx", "psd", "py", "raw", "rb", "sass", "scss", "sh", "sql", "svg", "tiff", "tsx", "ttf", "txt", "wav", "woff", "xlsx", "xml", "yml"]
-    fileIconClass = f"bi bi-filetype-{fileExt}" if fileExt in fileTypes else "bi bi-file-earmark"
-    return fileIconClass
+    file_icon_class = f"bi bi-filetype-{file_ext}" if file_ext in file_types else "bi bi-file-earmark"
+    return file_icon_class
 
 
-@app.route('/drive/' ,defaults={'reqPath' : ''})
-@app.route('/drive/<path:reqPath>')
-def getFiles(reqPath):
+@app.route('/drive/' ,defaults={'req_path' : ''})
+@app.route('/drive/<path:req_path>')
+
+def get_files(req_path):
     
-    absPath = os.path.join(basePath, reqPath)
+    abs_path = os.path.join(base_path, req_path)
     
-    if not os.path.exists(absPath):
+    if not os.path.exists(abs_path):
         return abort(404)
     
-    if os.path.isfile(absPath):
-        return send_file(absPath)
+    if os.path.isfile(abs_path):
+        return send_file(abs_path)
     
-    def fObjFromScan(x):
-        fileStat = x.stat()
+    def fobj_from_scan(x):
+        file_stat = x.stat()
         return{'name' : x.name,
-               'fIcon': "bi bi folder-fill" if os.path.isdir(x.path) else getIconClassForFilename(x.name),
-               'relPath' : os.path.relpath(x.path, basePath).replace("\\","/"),
-               'mTime':getTimeStampString(fileStat.st_mtime),
-               'size':getReadableByteSize(fileStat.st_size)}
-    fileObjs = [fObjFromScan(x) for x in os.scandir(absPath)]
+               'fIcon': "bi bi folder-fill" if os.path.isdir(x.path) else get_icon_class_for_filename(x.name),
+               'relPath' : os.path.relpath(x.path, base_path).replace("\\","/"),
+               'mTime':get_time_stamp_string(file_stat.st_mtime),
+               'size':get_readable_byte_size(file_stat.st_size)}
+    file_objs = [fobj_from_scan(x) for x in os.scandir(abs_path)]
 
     return render_template('drive.html.j2' , data={
-        'files': fileObjs})   
+        'files': file_objs})   
 
 
 app.run(host= "0.0.0.0" , port=50100, debug=True)  
