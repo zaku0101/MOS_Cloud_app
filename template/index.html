@@ -1,25 +1,104 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 	<meta charset="utf-8">
 	<link rel="shortcut icon" href="/static/images/mos.png">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1"> 
+    <link href="styles.css" rel="stylesheet">
 	<link rel="stylesheet" type="text/css" href="/static/css/index.min.css">
-	<title>Cloud files</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+   
+	<title>SKN_MOS_CLOUD</title>
+    <style>
+    body{
+        font-family: 'Press Start 2p';font-size: 22px;
+        background-color: black;
+        color:whitesmoke;
+    }
+    .login-panel{
+    position:relative;
+    width: 400;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+    max-width: 700px;
+}
+#mn{
+    width: 100%;
+    height: 100%;
+    border:5px;
+}
+h1{
+    text-align: center;
+}
+img{
+    width: 100%;
+    height: 100%;
+}
+#sgn{
+    height: 40%;
+    width: 40%;
+    float: left;
+    position: absolute;
+    top:45%;
+    left: 32%;
+    z-index: 100;
+    padding: 5px;
+}
+button {
+    width: 100%;
+  font-family: "Open Sans", sans-serif;
+  font-size: 16px;
+  letter-spacing: 2px;
+  text-decoration: none;
+  text-transform: uppercase;
+  color: #000;
+  cursor: pointer;
+  border: 3px solid;
+  padding: 0.25em 0.5em;
+  box-shadow: 1px 1px 0px 0px, 2px 2px 0px 0px, 3px 3px 0px 0px, 4px 4px 0px 0px, 5px 5px 0px 0px;
+  position: relative;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.button-54:active {
+  box-shadow: 0px 0px 0px 0px;
+  top: 5px;
+  left: 5px;
+}
+
+@media (min-width: 768px) {
+  .button-54 {
+    padding: 0.25em 0.75em;
+  }
+}
+
+
+    </style>
 </head>
+
 <body>
-    <center>
-	<p id="hed" style="font-family: fantasy">Cloud drive</p>
-		<p id="des" style="font-family: fantasy ">MOS FTP Cloud</p>
-		<div id="img-sign">
-			<img id="mn" src="/static/images/serv.gif">
+<main>
+		<h1 id="des" >SKN MOS FTP Cloud</h1>
+        <section>
+            <div class="login-panel">
+			<img id="mn" src="/static/images/serv.gif" alt ="server gif">
 			<div id="sgn">
-				<a href="/sign_up"><button class="sgn-btn">LOGIN</button></a>
+				<a href="/login"><button class="sgn-btn">SSH Login</button></a>
 				<br>
-				<a href="localhost:50100/drive/"><button class="sgn-btn">GUEST</button></a>
+                <br>                
+				<a href="/drive/"><button class="sgn-btn">GUEST</button></a>
 			</div>
 		</div>
-	</center>
+        </section>
+</main>
 
 </body>
 </html>
