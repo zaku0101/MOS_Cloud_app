@@ -10,8 +10,12 @@ app = Flask(__name__, static_folder="static", template_folder="template")
 basePath = r'/Users/zaku/Desktop/mos-drive'
 
 @app.route('/')
-def dupa1():
+def main_page():
     return render_template("index.html")
+
+@app.route('/login')
+def logging_page():
+        return render_template("login.html")
 
 def getReadableByteSize(num, suffix='B') -> str:
     for unit in ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z']:
