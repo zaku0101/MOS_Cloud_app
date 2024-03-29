@@ -1,0 +1,77 @@
+body{
+    font-family: 'Press Start 2p';
+    background-color: black;
+    color:whitesmoke;
+    max-width: 1100px;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    
+}
+main{
+    text-align: center;
+}
+a{
+    color:whitesmoke;
+}
+h1{
+    text-align: center;
+    font-size: 18px;
+
+}
+td{
+    text-align: center;
+    text-indent: -8px;
+    border:  2px solid white ;
+
+}
+.filename{
+    text-align: left;
+
+}
+.table{
+
+    margin:auto;
+    border-collapse:initial;
+    border-spacing: 6px;
+}
+#name{
+    text-align: left;
+}
+table {
+padding-left: 10px;
+padding-right:10px ;
+table-layout:fixed;
+width:100%;
+
+}
+table td, th {
+    word-wrap:break-word;
+}
+th {
+    text-align: center;
+}
+.size{
+text-align: right;
+font-size: 5;
+}
+.menu{
+    text-align: left;
+    margin-left: 5px;
+}
+#sizeh{
+    text-align: right;
+    font-size: 16px;
+    }
+thead{
+    padding: 100px;
+}
+.size,.time{
+    font-size: 1;
+
+}
+
+th,
+td {
+  padding: 10px 0;
+}

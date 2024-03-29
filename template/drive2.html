@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="shortcut icon" href="/static/images/mos.png">
+  <title>MOS FTP Cloud</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700,800" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link href="/static/drive2.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+</head>
+
+<body>
+  <div class="label">
+    <header>
+      <h1 class="bold">File explorer</h1>
+    </header>
+    <div class="divider medium"></div>
+    <div class="menu">
+    <span><a class="" href="{{ url_for('get_files', req_path=data['parentFolder']) }}">
+        <span><i class="bi bi-folder-symlink homedir"></i> cd ..</span></a></span><span>mkdir</span></span><span>upload </span><span>delete</span>
+    </div>
+    <div class="divider medium"></div>
+    <div class="content">
+<table style="width:100%;">
+    <tr>
+        <th style="width:70%" id="name">Name</th>
+        <th style="width: 29%">Date</th>
+        <th style="width: 1%">Size</th>
+    </tr>
+    <tbody>
+        {% for fileObj in data['files'] %}
+        <tr >
+            <td  class="filename">
+                <a href="{{ url_for('get_files', req_path=fileObj['relPath']) }}">
+                    <span><i class="{{fileObj['fIcon']}}"></i>{{ fileObj['name'] }}</span>
+                </a>
+            </td>
+            <td class="time" scope="col" >{{fileObj['mTime']}}</td>
+            <td class= "size" scope = "col">{{fileObj['size']}}</td>
+			
+        </tr>
+        {% endfor %}
+    </tbody>
+    </table>
+  </div>
+</body>
+</html>

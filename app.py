@@ -26,7 +26,7 @@ def get_readable_byte_size(num, suffix='B') -> str:
 
 def get_time_stamp_string(tsec: float) -> str:
     tobj = dt.datetime.fromtimestamp(tsec)
-    tstr = dt.datetime.strftime(tobj, '%Y-%m-%d %H:%M:%S')
+    tstr = dt.datetime.strftime(tobj, '%Y-%m-%d %H:%M')
     return tstr
 def get_icon_class_for_filename(fname):
     file_ext = Path(fname).suffix
@@ -53,13 +53,13 @@ def get_files(req_path):
     def fobj_from_scan(x):
         file_stat = x.stat()
         return{'name' : x.name,
-               'fIcon': "bi bi folder-fill" if os.path.isdir(x.path) else get_icon_class_for_filename(x.name),
+               'fIcon': "bi bi folder-fill" if False else get_icon_class_for_filename(x.name),
                'relPath' : os.path.relpath(x.path, base_path).replace("\\","/"),
                'mTime':get_time_stamp_string(file_stat.st_mtime),
                'size':get_readable_byte_size(file_stat.st_size)}
     file_objs = [fobj_from_scan(x) for x in os.scandir(abs_path)]
 
-    return render_template('drive.html.j2' , data={
+    return render_template('drive2.html' , data={
         'files': file_objs})   
 
 
