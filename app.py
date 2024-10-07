@@ -19,7 +19,7 @@ def get_ftp_connection():
 @app.route('/')
 def main_page():
     return render_template("index.html")
-
+s
 @app.route('/login')
 def logging_page():
         return render_template("login.html")
