@@ -34,7 +34,7 @@
         {% for fileObj in data['files'] %}
         <tr >
             <td  class="filename">
-                <a href="{{ url_for('get_files', req_path=fileObj['relPath']) }}">
+                <a href="{{ url_for('download_file', filename=fileObj['relPath']) }}">
                     <span><i class="{{fileObj['fIcon']}}"></i>{{ fileObj['name'] }}</span>
                 </a>
             </td>

@@ -4,10 +4,17 @@ from flask import render_template,send_file, abort
 from pathlib import Path
 import shutil, os, datetime, random
 import datetime as dt
+import ftplib
+import io
 
 app = Flask(__name__, static_folder="static", template_folder="template")
 
-base_path = r'/Users/zaku/Desktop/mos-drive'
+FTP_HOST = "localhost"
+
+def get_ftp_connection():
+    ftp = ftplib.FTP(FTP_HOST)
+    ftp.login()
+    return ftp
 
 @app.route('/')
 def main_page():
@@ -39,28 +46,57 @@ def get_icon_class_for_filename(fname):
 
 @app.route('/drive/' ,defaults={'req_path' : ''})
 @app.route('/drive/<path:req_path>')
-
-def get_files(req_path):
-    
-    abs_path = os.path.join(base_path, req_path)
-    
-    if not os.path.exists(abs_path):
+def get_files(req_path):    
+    ftp = get_ftp_connection()
+    try:
+        ftp.cwd(req_path)
+    except:
         return abort(404)
-    
-    if os.path.isfile(abs_path):
-        return send_file(abs_path)
-    
-    def fobj_from_scan(x):
-        file_stat = x.stat()
-        return{'name' : x.name,
-               'fIcon': "bi bi folder-fill" if False else get_icon_class_for_filename(x.name),
-               'relPath' : os.path.relpath(x.path, base_path).replace("\\","/"),
-               'mTime':get_time_stamp_string(file_stat.st_mtime),
-               'size':get_readable_byte_size(file_stat.st_size)}
-    file_objs = [fobj_from_scan(x) for x in os.scandir(abs_path)]
+    file_objs = []
+    try:
+        for name in ftp.nlst():
+            try:
+                size = ftp.size(name)
+                mtime = ftp.sendcmd(f"MDTM {name}")[4:].strip()
+                mtime = dt.datetime.strptime(mtime, '%Y%m%d%H%M%S').timestamp()
+                file_objs.append({
+                    'name': name,
+                    'fIcon': get_icon_class_for_filename(name),
+                    'relPath': os.path.join(req_path, name).replace("\\", "/"),
+                    'mTime': get_time_stamp_string(mtime),
+                    'size': get_readable_byte_size(size)
+                })
+            except ftplib.error_perm:
+                file_objs.append({
+                    'name': name,
+                    'fIcon': "bi bi-folder-fill",
+                    'relPath': os.path.join(req_path, name).replace("\\", "/"),
+                    'mTime': '',
+                    'size': ''
+                })
+    finally:
+        ftp.quit()
 
-    return render_template('drive2.html' , data={
-        'files': file_objs})   
+    parent_folder = os.path.dirname(req_path)
+    return render_template('drive.html', data={'files': file_objs, 'parentFolder': parent_folder})
+    
+    
+@app.route('/download/<path:filename>')
+def download_file(filename):
+    ftp = get_ftp_connection()
+    try:
+        try:
+            ftp.cwd(filename)
+            return get_files(filename)
+        except ftplib.error_perm:
+            bio = io.BytesIO()
+            ftp.retrbinary(f"RETR {filename}", bio.write)
+            bio.seek(0)
+            return send_file(bio, as_attachment=True, download_name=os.path.basename(filename))
+    except ftplib.error_perm:
+        return abort(404)
+    finally:
+        ftp.quit()
 
 if __name__ == '__main__':
-    app.run(host= "0.0.0.0" , port=50100, debug=True)  
+    app.run(host= "0.0.0.0" , port=50110, debug=True)  
