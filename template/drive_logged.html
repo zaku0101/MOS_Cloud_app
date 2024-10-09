@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="shortcut icon" href="/static/images/mos.png">
+  <title>MOS FTP Cloud</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700,800" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link href="/static/drive2.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+  <style>
+    .hidden {
+        display: none;
+    }
+    button {
+      width: 100%;
+      font-family: "Open Sans", sans-serif;
+      font-size: 16px;
+      letter-spacing: 2px;
+      text-decoration: none;
+      text-transform: uppercase;
+      color: #fff; /* Change text color to white */
+      cursor: pointer;
+      border: 3px solid;
+      padding: 0.25em 0.5em;
+      box-shadow: 1px 1px 0px 0px, 2px 2px 0px 0px, 3px 3px 0px 0px, 4px 4px 0px 0px, 5px 5px 0px 0px;
+      position: relative;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+      background-color: #333; /* Change background color to a darker shade */
+      border-color: #333; /* Match border color with background */
+  }
+  
+  .button-54:active {
+      box-shadow: 0px 0px 0px 0px;
+      top: 5px;
+      left: 5px;
+  }
+  
+  @media (min-width: 768px) {
+      .button-54 {
+          padding: 0.25em 0.75em;
+      }
+</style>
+</head>
+
+<body>
+  <div class="label">
+    <header>
+      <h1 class="bold">File Explorer</h1>
+    </header>
+    <div class="divider medium"></div>
+    <div class="menu">
+      <span><button class="menu-button" onclick="window.location.href='{{ url_for('get_files', req_path=data['parentFolder']) }}'">
+        <span><i class="bi bi-folder-symlink homedir"></i> cd ..</span></button></span>
+      <span><button id="mkdir">mkdir</button></span>
+      <span>
+        <form style="display:inline;">
+          <input type="file" id="upload" style="display:none;">
+          <button type="button" class="menu-button" onclick="document.getElementById('upload').click();">upload</button>
+        </form>
+      </span>
+      <span><button id="toggleDeleteMode">delete</button></span>
+      <span><button onclick="window.location.href='{{ url_for('logout') }}'">logout</button></span>
+    </div>
+    <div class="divider medium"></div>
+    <div class="content">
+      <table style="width:100%;">
+        <tr>
+          <th style="width:70%" id="name">Name</th>
+          <th style="width: 29%">Date</th>
+          <th style="width: 1%">Size</th>
+          <th style="width: 1%" id="actions_header" class="hidden">Actions</th>
+        </tr>
+        <tbody>
+          {% for file in data['files'] %}
+          <tr>
+            <td><i class="{{ file['fIcon'] }}"></i> <a href="{{ url_for('download_file', filename=file['relPath']) }}">{{ file['name'] }}</a></td>
+            <td>{{ file['mTime'] }}</td>
+            <td>{{ file['size'] }}</td>
+            <td class="hidden" id="actions">
+              <a href="{{ url_for('download_file', filename=file['relPath']) }}"></a>
+              <a href="#" class="delete-icon" onclick="confirmDelete(this, '{{ url_for('delete_file', filename=file['relPath']) }}')" style="display:none;">
+                <i class="bi bi-trash"></i>
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("toggleDeleteMode").addEventListener("click", function() {
+      var actionsHeader = document.getElementById("actions_header");
+      var actionCells = document.querySelectorAll("td#actions");
+      var deleteIcons = document.getElementsByClassName("delete-icon");
+
+      actionsHeader.classList.toggle("hidden");
+      for (var i = 0; i < actionCells.length; i++) {
+          actionCells[i].classList.toggle("hidden");
+      }
+      for (var i = 0; i < deleteIcons.length; i++) {
+          deleteIcons[i].classList.toggle("hidden");
+      }
+  });
+
+    document.getElementById('toggleDeleteMode').addEventListener('click', function() {
+      const deleteIcons = document.querySelectorAll('.delete-icon');
+      deleteIcons.forEach(icon => {
+        if (icon.style.display === 'none') {
+          icon.style.display = 'inline';
+        } else {
+          icon.style.display = 'none';
+        }
+      });
+    });
+
+    function confirmDelete(element, url) {
+      if (confirm('Are you sure you want to delete this file?')) {
+        window.location.href = url;
+      }
+    }
+  </script>
+<script>
+  document.getElementById("mkdir").innerHTML
+  var currentPath = window.location.pathname;
+  currentPath=currentPath.substring(7); 
+    document.getElementById("mkdir").addEventListener("click", function() {
+        var dirName = prompt("Enter the name of the new directory:");
+        if (dirName) {
+            // Send AJAX request to the server to create the directory
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/create_directory", true);
+            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    alert("Directory created successfully!");
+                    location.reload(); // Refresh the file list
+                } else if (xhr.readyState === 4) {
+                    alert("Failed to create directory.");
+                }
+            };
+            xhr.send(JSON.stringify({ current_path: currentPath, directory_name: dirName }));
+        }
+    });
+
+
+  document.getElementById("upload").addEventListener("change", function() {
+    var file = this.files[0];
+    if (file) {
+      var formData = new FormData();
+      formData.append("file", file);
+      formData.append("current_path", currentPath);
+
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", "/upload", true);
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          alert("File uploaded successfully!");
+          location.reload(); // Refresh the file list
+        } else if (xhr.readyState === 4) {
+          alert("Failed to upload file.");
+        }
+      };
+      xhr.send(formData);
+    }
+  });
+
+  </script>
+
+</body>
+
+</html>

@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="utf-8">
@@ -20,14 +21,165 @@
             <div class="login-panel">
 			<img id="mn" src="/static/images/serv.gif" alt ="server gif">
 			<div id="sgn">
-				<a href="/login"><button class="sgn-btn">FTP Login</button></a>
+				<button class="sgn-btn" id = "openModalBtn">FTP Login</button></a>
 				<br>
                 <br>                
 				<a href="/drive/"><button class="sgn-btn">GUEST</button></a>
 			</div>
 		</div>
         </section>
-</main>
-
+        <div id="loginModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <form id="loginForm" action="/login" method="post">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" required>
+                    <br>
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required>
+                    <br>
+                    <button type="submit" class="sgn-btn">Login</button>
+                </form>
+            </div>
+        </div>
+    </main>
+    
+    <script>
+        // Get the modal
+        var modal = document.getElementById("loginModal");
+    
+        // Get the button that opens the modal
+        var btn = document.getElementById("openModalBtn");
+    
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+    
+        // When the user clicks the button, open the modal 
+        btn.onclick = function() {
+            modal.style.display = "block";
+            document.body.classList.add("modal-open");
+            document.getElementById("username").focus(); // Set focus on username input
+        }
+    
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function() {
+            modal.style.display = "none";
+            document.body.classList.remove("modal-open");
+        }
+    
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+                document.body.classList.remove("modal-open");
+            }
+        }
+    
+        // Add event listener for Enter key to submit the form
+        document.getElementById("loginForm").addEventListener("keydown", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                document.querySelector("#loginForm button[type='submit']").click();
+            }
+        });
+    </script>
+    
+    <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: 'Press Start 2P', cursive;
+        }
+    
+        .login-panel {
+            text-align: center;
+            margin-top: 50px;
+        }
+    
+        .sgn-btn {
+            background-color: #1f1f1f;
+            color: #ffffff;
+            border: 2px solid #ffffff;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+    
+        .sgn-btn:hover {
+            background-color: #ffffff;
+            color: #1f1f1f;
+        }
+    
+        /* Modal styles */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 2; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.8); 
+            padding-top: 60px; 
+        }
+    
+        .modal-content {
+            background-color: #333333;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; 
+            max-width: 400px;
+            color: #ffffff;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+    
+        .close:hover,
+        .close:focus {
+            color: #ffffff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+    
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 20px;
+            border: none;
+            background-color: #444444;
+            color: #ffffff;
+        }
+    
+        input[type="text"]::placeholder, input[type="password"]::placeholder {
+            color: #bbbbbb;
+        }
+    
+        /* Hide buttons when modal is open */
+        .modal-open .sgn-btn {
+            visibility: hidden;
+        }
+    
+        /* Ensure the submit button is visible */
+        .modal-content .sgn-btn {
+            visibility: visible;
+        }
+    </style>
 </body>
 </html>
